@@ -9,6 +9,16 @@
       "title": "Get a job",
       "completed": false,
       "id": 3
+    },
+    {
+      "title": "Learn CSS",
+      "completed": false,
+      "id": 4
+    },
+    {
+      "title": "skriv ansøgning til PDC",
+      "completed": false,
+      "id": 5
     }
   ]
 }

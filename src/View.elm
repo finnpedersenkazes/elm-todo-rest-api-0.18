@@ -1,10 +1,15 @@
 module View exposing (..)
 
+import Bootstrap.Alert as Alert
+import Bootstrap.Button as Button
+import Bootstrap.CDN as CDN
+import Bootstrap.Grid as Grid
+import Bootstrap.Grid.Col as Col
+import Bootstrap.Grid.Row as Row
 import Html exposing (..)
-import Html.Attributes exposing (style, href, target)
-import Html exposing(map)
-import Models exposing (Model)
+import Html.Attributes exposing (class, href, style, target)
 import Messages exposing (Msg(TodosMsg))
+import Models exposing (Model)
 import Todos.Edit
 import Todos.List
 
@@ -17,8 +22,9 @@ view : Model -> Html Msg
 view model =
     div []
         [ siteHeader
-          -- render the todos edit and list sub-views using pars of the model,
-          -- then "tag" outgoing messages with TodosMsg
+
+        -- render the todos edit and list sub-views using pars of the model,
+        -- then "tag" outgoing messages with TodosMsg
         , Html.map TodosMsg <| Todos.Edit.view model.todoEditView
         , br [] []
         , Html.map TodosMsg <| Todos.List.view model.todos

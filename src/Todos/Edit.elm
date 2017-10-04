@@ -1,9 +1,10 @@
 module Todos.Edit exposing (..)
 
+import Bootstrap.Button as Button
 import Html exposing (..)
 import Html.Attributes exposing (placeholder, value)
 import Html.Events exposing (onClick, onInput)
-import Todos.Messages exposing (Msg(ShowEditView, ChangeTitle, CreateOrPatch))
+import Todos.Messages exposing (Msg(ChangeTitle, CreateOrPatch, ShowEditView))
 import Todos.Models exposing (Todo, TodoEditView(..))
 
 
@@ -17,13 +18,10 @@ view ev =
         -- handle the different cases of the TodoEditView
         [ case ev of
             None ->
-                button
-                    -- on click, dispatch a message
-                    -- TodoEditView holds the value of the text box,
-                    -- so we can initialize it with an empty string
-                    -- notice how the <| operator is needed here
-                    -- to tell elm which arguments belong to what
-                    [ onClick <| ShowEditView <| New "" ]
+                Button.button
+                    [ Button.outlinePrimary
+                    , Button.attrs [ onClick <| ShowEditView <| New "" ]
+                    ]
                     [ text "Create New Todo" ]
 
             New title ->
@@ -48,8 +46,10 @@ view ev =
 editingInputs : String -> Html Msg
 editingInputs title =
     div []
-        [ button
-            [ onClick <| ShowEditView None ]
+        [ Button.button
+            [ Button.outlinePrimary
+            , Button.attrs [ onClick <| ShowEditView None ]
+            ]
             [ text "Back" ]
         , input
             [ value title
@@ -57,7 +57,9 @@ editingInputs title =
             , onInput ChangeTitle
             ]
             []
-        , button
-            [ onClick CreateOrPatch ]
+        , Button.button
+            [ Button.outlinePrimary
+            , Button.attrs [ onClick CreateOrPatch ]
+            ]
             [ text "Save" ]
         ]

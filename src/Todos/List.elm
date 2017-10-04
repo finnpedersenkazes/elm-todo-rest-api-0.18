@@ -1,9 +1,16 @@
 module Todos.List exposing (..)
 
+import Bootstrap.Alert as Alert
+import Bootstrap.Button as Button
+import Bootstrap.CDN as CDN
+import Bootstrap.Grid as Grid
+import Bootstrap.Grid.Col as Col
+import Bootstrap.Grid.Row as Row
+import Bootstrap.Table as Table
 import Html exposing (..)
-import Html.Attributes exposing (style)
+import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
-import Todos.Messages exposing (Msg(ShowEditView, Revert, Complete, Patch, Delete, DeleteCompleted))
+import Todos.Messages exposing (Msg(Complete, Delete, DeleteCompleted, Patch, Revert, ShowEditView))
 import Todos.Models exposing (Todo, TodoEditView(Editing))
 
 
@@ -34,21 +41,18 @@ cell el children =
 view : List Todo -> Html Msg
 view todos =
     div []
-        [ table []
-            [ thead []
-                [ cell th [ text "Id" ]
-                , cell th [ text "Title" ]
-                , cell th [ text "Completed?" ]
-                , cell th [ text "Actions" ]
-                ]
-              -- below, we keep things modular by mapping a todo row view to every todo
-            , tbody [] <| List.map todo <| todos
-              -- note:
-              -- instead, the above could have been:
-              --     tbody [] (List.map todo todos)
-              -- but, it does demonstrate a good use of the
-              -- right-to-left function application operator
-            ]
+        [ Table.table
+            { options = [ Table.bordered ]
+            , thead =
+                Table.simpleThead
+                    [ Table.th [] [ text "Id" ]
+                    , Table.th [] [ text "Title" ]
+                    , Table.th [] [ text "Completed?" ]
+                    , Table.th [] [ text "Actions" ]
+                    ]
+            , tbody =
+                Table.tbody [] <| List.map todo2 <| todos
+            }
         , footer
         ]
 
@@ -57,11 +61,12 @@ view todos =
 -- a single todo row
 
 
-todo : Todo -> Html Msg
-todo t =
+todo2 : Todo -> Table.Row Msg
+todo2 t =
     let
         -- destructure our todo
-        { id, title, completed } = t
+        { id, title, completed } =
+            t
 
         -- decide on some UI text/actions based on todo completed status
         ( completedText, buttonText, buttonMsg ) =
@@ -70,22 +75,66 @@ todo t =
             else
                 ( "No", "Done", Complete )
     in
-        tr []
-            [ cell td [ text <| toString id ]
-            , cell td [ text title ]
-            , cell td [ text completedText ]
-            , cell td
-                [ button
-                    [ onClick <| buttonMsg t ]
-                    [ text buttonText ]
-                , button
-                    [ onClick <| ShowEditView <| Editing t ]
-                    [ text "Edit" ]
-                , button
-                    [ onClick <| Delete t ]
-                    [ text "Delete" ]
+    Table.tr []
+        [ Table.td [] [ text <| toString id ]
+        , Table.td [] [ text title ]
+        , Table.td [] [ text completedText ]
+        , Table.td []
+            [ Button.button
+                [ Button.primary
+                , Button.attrs [ onClick <| buttonMsg t ]
                 ]
+                [ text buttonText ]
+            , Button.button
+                [ Button.info
+                , Button.attrs [ onClick <| ShowEditView <| Editing t ]
+                ]
+                [ text "Edit" ]
+            , Button.button
+                [ Button.danger
+                , Button.attrs [ onClick <| Delete t ]
+                ]
+                [ text "Delete" ]
             ]
+        ]
+
+
+todo : Todo -> Html Msg
+todo t =
+    let
+        -- destructure our todo
+        { id, title, completed } =
+            t
+
+        -- decide on some UI text/actions based on todo completed status
+        ( completedText, buttonText, buttonMsg ) =
+            if completed then
+                ( "Yes", "Revert", Revert )
+            else
+                ( "No", "Done", Complete )
+    in
+    tr []
+        [ cell td [ text <| toString id ]
+        , cell td [ text title ]
+        , cell td [ text completedText ]
+        , cell td
+            [ Button.button
+                [ Button.primary
+                , Button.attrs [ onClick <| buttonMsg t ]
+                ]
+                [ text buttonText ]
+            , Button.button
+                [ Button.info
+                , Button.attrs [ onClick <| ShowEditView <| Editing t ]
+                ]
+                [ text "Edit" ]
+            , Button.button
+                [ Button.danger
+                , Button.attrs [ onClick <| Delete t ]
+                ]
+                [ text "Delete" ]
+            ]
+        ]
 
 
 
@@ -96,7 +145,9 @@ footer : Html Msg
 footer =
     div []
         [ br [] []
-        , button
-            [ onClick DeleteCompleted ]
+        , Button.button
+            [ Button.danger
+            , Button.attrs [ onClick DeleteCompleted ]
+            ]
             [ text "Clear Completed" ]
         ]
